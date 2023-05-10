@@ -1,9 +1,12 @@
 # newer versions go on top
+<<<<<<< HEAD
 - version: "0.0.2"
   changes:
     - description: Updating the logo
       type: enhancement
       link: https://github.com/elastic/integrations/pull/6066
+=======
+>>>>>>> parent of 23c41f914 (Update sql input package logo)
 - version: "0.0.1"
   changes:
     - description: Initial draft of the SQL Input Package

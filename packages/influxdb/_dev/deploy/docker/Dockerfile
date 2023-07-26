@@ -1,4 +1,4 @@
-ARG SERVICE_VERSION=${SERVICE_VERSION:-2.4.0}
+ARG SERVICE_VERSION=${SERVICE_VERSION:-2.5.0}
 FROM influxdb:${SERVICE_VERSION}
 COPY ./influxdb.conf /var/lib/influxdb2/influxdb.conf
 COPY ./config.yml /etc/influxdb2/config.yml

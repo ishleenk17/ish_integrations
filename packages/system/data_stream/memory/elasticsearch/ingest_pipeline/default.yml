@@ -1,0 +1,46 @@
+---
+description: Pipeline for processing OTEL metrics.
+processors:
+  - set:
+      field: ecs.version
+      value: '8.11.0'  
+  - set:
+      field: ishleen_pipeline
+      value: "memory"
+  - script:
+      source: |
+        if (ctx?.metrics != null) {
+          for (k in ctx.metrics.keySet()) {
+            ctx[k] = ctx.metrics[k];
+          }
+
+          ctx.remove('metrics');
+        }
+
+        if (ctx?.resource?.attributes != null) {
+          for (k in ctx.resource.attributes.keySet()) {
+            ctx[k] = ctx.resource.attributes[k];
+          }
+
+          ctx.resource.remove('attributes');
+        }
+  - rename:
+      field: host.image.id
+      target_field: cloud.image.id
+      ignore_missing: true
+      if: ctx?.cloud?.account?.id != null
+  - rename:
+      field: host.id
+      target_field: cloud.instance.id
+      ignore_missing: true
+      if: ctx?.cloud?.account?.id != null
+  - rename:
+      field: host.type
+      target_field: cloud.machine.type
+      ignore_missing: true
+      if: ctx?.cloud?.account?.id != null
+
+on_failure:
+  - append:
+      field: error.message
+      value: "{{ _ingest.on_failure_message }}"

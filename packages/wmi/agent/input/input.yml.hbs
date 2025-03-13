@@ -2,13 +2,18 @@ metricsets: ["wmi"]
 data_stream:
   dataset: {{data_stream.dataset}}
 period: {{period}}
-wmi.namespace: {{wmi.namespace}}
-wmi.queries: {{wmi.queries}}
-wmi.warning_threashold: {{wmi.warning_threshold}}
-wmi.host: {{wmi.host}}
-wmi.domain: {{wmi.domain}}
-wmi.username: {{wmi.username}}
-wmi.password: {{wmi.password}}
-wmi.include_queries: {{wmi.include_queries}}
-wmi.include_null: {{wmi.include_null}}
-wmi.include_empty_strings: {{wmi.include_empty_strings}}
+wmi:
+  namespace: {{wmi.namespace}}
+  queries: {{wmi.queries}}
+  warning_threashold: {{wmi.warning_threshold}}
+  include_queries: {{wmi.include_queries}}
+  include_null_properties: {{wmi.include_null}}
+  include_empty_strings_properties: {{wmi.include_empty_strings}}
+{{#if processors}}
+processors:
+{{processors}}
+{{/if}}
+
+{{#each tags as |tag|}}
+  - {{tag}}
+{{/each}}

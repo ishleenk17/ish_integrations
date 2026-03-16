@@ -81,7 +81,7 @@ dashboards:
             | LIMIT 10
           dimension:
             field: attributes.lock_type
-            label: attributes.lock_type
+            label: Lock Type
           metrics:
             - field: locks
               label: Locks
@@ -107,7 +107,7 @@ dashboards:
             | LIMIT 10
           dimension:
             field: attributes.mode
-            label: attributes.mode
+            label: Mode
           metrics:
             - field: locks
               label: Locks

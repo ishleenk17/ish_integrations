@@ -157,6 +157,9 @@ dashboards:
           legend:
             visible: show
             position: right
+          appearance:
+            y_left_axis:
+              title: Transactions/sec
 
       # Tuple Throughput Over Time (lnsXY line, 1 metric: total)
       - title: Tuple Throughput Over Time
@@ -228,6 +231,9 @@ dashboards:
           legend:
             visible: show
             position: right
+          appearance:
+            y_left_axis:
+              title: Tuples/sec
 
       # Top Databases by Transaction Rate (lnsDatatable)
       - title: Top Databases by Transaction Rate

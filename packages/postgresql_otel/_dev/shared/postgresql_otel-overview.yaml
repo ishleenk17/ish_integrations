@@ -280,7 +280,7 @@ dashboards:
             data_type: date
           metrics:
             - field: rate
-              label: /sec
+              label: Transactions/sec
               format:
                 type: number
                 decimals: 2

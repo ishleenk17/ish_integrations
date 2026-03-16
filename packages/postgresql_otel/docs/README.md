@@ -164,6 +164,8 @@ The `postgresqlreceiver` emits event logs from `pg_stat_activity` (`db.server.qu
 
 ## SLO templates
 
+> **Note**: SLO templates require Elastic Stack version 9.4.0 or later.
+
 | SLO | Target | Window | Description |
 |-----|--------|--------|-------------|
 | **[PostgreSQL OTel] Average query latency 99.5% rolling 30 days** | 99.5% | 30-day rolling | Average per-query execution time below 200 ms for 99.5% of 1-minute intervals to maintain responsive database performance. |

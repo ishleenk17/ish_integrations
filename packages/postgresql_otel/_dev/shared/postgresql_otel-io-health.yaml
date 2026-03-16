@@ -96,19 +96,21 @@ dashboards:
             FROM metrics-postgresqlreceiver.otel-*
             | WHERE postgresql.blks_hit IS NOT NULL OR postgresql.blks_read IS NOT NULL
             | STATS hit = MAX(TO_DOUBLE(postgresql.blks_hit)), read = MAX(TO_DOUBLE(postgresql.blks_read))
-            | EVAL hit_ratio = CASE(read + hit > 0, hit / (hit + read), 0.0)
+            | EVAL hit_ratio = CASE(read + hit > 0, hit / (hit + read), 0.0), gauge_min = 0.0, gauge_max = 1.0, gauge_goal = 0.99
           metric:
             field: hit_ratio
             label: Hit Ratio
             format:
               type: percent
               decimals: 2
-          minimum: 0
-          maximum: 1
-          goal: 0.99
+          minimum:
+            field: gauge_min
+          maximum:
+            field: gauge_max
+          goal:
+            field: gauge_goal
           appearance:
             shape: arc
-            color_mode: palette
 
       # Buffer Writes by Source (lnsPie, donut)
       - title: Buffer Writes by Source

@@ -134,19 +134,21 @@ dashboards:
             TS metrics-postgresqlreceiver.otel-*
             | WHERE postgresql.backends IS NOT NULL OR postgresql.connection.max IS NOT NULL
             | STATS backends = SUM(LAST_OVER_TIME(postgresql.backends)), max_conn = MAX(LAST_OVER_TIME(postgresql.connection.max))
-            | EVAL utilization = CASE(max_conn > 0, TO_DOUBLE(backends) / TO_DOUBLE(max_conn), 0)
+            | EVAL utilization = CASE(max_conn > 0, TO_DOUBLE(backends) / TO_DOUBLE(max_conn), 0.0), gauge_min = 0.0, gauge_max = 1.0, gauge_goal = 0.8
           metric:
             field: utilization
             label: Utilization
             format:
               type: percent
               decimals: 2
-          minimum: 0
-          maximum: 1
-          goal: 0.8
+          minimum:
+            field: gauge_min
+          maximum:
+            field: gauge_max
+          goal:
+            field: gauge_goal
           appearance:
             shape: arc
-            color_mode: palette
 
       # Backends by Database (lnsPie, donut)
       - title: Backends by Database

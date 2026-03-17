@@ -248,7 +248,7 @@ dashboards:
             | EVAL rollback_ratio = CASE(commits > 0, rollbacks / commits, 0.0)
             | SORT commits DESC
             | LIMIT 20
-          dimensions:
+          breakdowns:
             - field: resource.attributes.postgresql.database.name
               label: Database
           metrics:

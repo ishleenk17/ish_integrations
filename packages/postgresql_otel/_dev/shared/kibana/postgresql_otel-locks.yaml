@@ -157,7 +157,7 @@ dashboards:
             | STATS locks = SUM(postgresql.database.locks) BY attributes.relation, attributes.lock_type, attributes.mode
             | SORT locks DESC
             | LIMIT 50
-          dimensions:
+          breakdowns:
             - field: attributes.relation
               label: Relation
             - field: attributes.lock_type

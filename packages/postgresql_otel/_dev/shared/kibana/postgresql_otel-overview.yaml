@@ -173,7 +173,7 @@ dashboards:
             | EVAL rollback_pct = CASE(commits + rollbacks > 0, rollbacks / (commits + rollbacks) * 100.0, 0.0), hit_ratio = CASE(blks_hit + blks_read > 0, blks_hit / (blks_hit + blks_read), 0.0)
             | KEEP resource.attributes.postgresql.database.name, connections, commits, rollback_pct, deadlocks, hit_ratio, temp_files, db_size
             | SORT connections DESC
-          dimensions:
+          breakdowns:
             - field: resource.attributes.postgresql.database.name
               label: Database
           metrics:

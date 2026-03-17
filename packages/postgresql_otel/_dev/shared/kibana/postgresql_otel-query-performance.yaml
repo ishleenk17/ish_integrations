@@ -169,7 +169,7 @@ dashboards:
             | STATS exec_time = SUM(attributes.postgresql.total_exec_time), calls = SUM(attributes.postgresql.calls), rows = SUM(attributes.postgresql.rows) BY query = attributes.db.query.text, attributes.db.namespace
             | SORT exec_time DESC
             | LIMIT 20
-          dimensions:
+          breakdowns:
             - field: query
               label: Query
             - field: attributes.db.namespace
@@ -204,7 +204,7 @@ dashboards:
             | STATS calls = SUM(attributes.postgresql.calls), exec_time = SUM(attributes.postgresql.total_exec_time), rows = SUM(attributes.postgresql.rows) BY query = attributes.db.query.text, attributes.db.namespace
             | SORT calls DESC
             | LIMIT 20
-          dimensions:
+          breakdowns:
             - field: query
               label: Query
             - field: attributes.db.namespace

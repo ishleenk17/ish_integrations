@@ -88,7 +88,7 @@ dashboards:
               format:
                 type: number
                 decimals: 0
-          dimensions:
+          breakdowns:
             - field: attributes.postgresql.state
               label: State
           appearance:
@@ -113,7 +113,7 @@ dashboards:
               format:
                 type: number
                 decimals: 0
-          dimensions:
+          breakdowns:
             - field: attributes.postgresql.wait_event_type
               label: Wait Event Type
           appearance:
@@ -131,7 +131,7 @@ dashboards:
             | KEEP @timestamp, attributes.db.namespace, attributes.db.query.text, attributes.postgresql.state, attributes.postgresql.total_exec_time, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.user.name, attributes.network.peer.address, attributes.postgresql.application_name
             | SORT @timestamp DESC
             | LIMIT 100
-          dimensions:
+          breakdowns:
             - field: "@timestamp"
               label: Time
             - field: attributes.db.namespace

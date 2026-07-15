@@ -1,0 +1,133 @@
+---
+description: >
+  Rename application service Prometheus metrics (Supavisor, PostgREST, GoTrue, etc.) into the supabase.* namespace.
+  Uses a script processor with a lookup map instead of individual rename processors.
+processors:
+  - script:
+      tag: rename_metrics_to_supabase_namespace
+      description: >
+        Renames raw Prometheus metric names from the metrics.* object into
+        the supabase.* namespace using a static lookup map (79 mappings).
+      lang: painless
+      source: >
+        def RENAME_MAP = [
+          'auth_users_total': 'supabase.auth_users.user_count',
+          'auth_users_user_count': 'supabase.auth_users.user_count',
+          'db_sql_connection_closed_max_idle_time_total': 'supabase.db.sql.connection_closed_max_idle.count',
+          'db_sql_connection_closed_max_idle_total': 'supabase.db.sql.connection_closed_max_idle.count',
+          'db_sql_connection_closed_max_lifetime_total': 'supabase.db.sql.connection_closed_max_lifetime.count',
+          'db_sql_connection_max_open': 'supabase.db.sql.connection_max_open',
+          'db_sql_connection_open': 'supabase.db.sql.connection_open',
+          'db_sql_connection_wait_total': 'supabase.db.sql.connection_wait.count',
+          'db_transmit_bytes': 'supabase.db.transmit_bytes.count',
+          'global_auth_version_major': 'supabase.global_auth_version.major',
+          'global_auth_version_minor': 'supabase.global_auth_version.minor',
+          'global_auth_version_patch': 'supabase.global_auth_version.patch',
+          'go_goroutines': 'supabase.go.goroutines',
+          'go_memstats_alloc_bytes': 'supabase.go.memstats.alloc_bytes',
+          'go_memstats_gc_sys_bytes': 'supabase.go.memstats.gc_sys_bytes',
+          'go_memstats_heap_alloc_bytes': 'supabase.go.memstats.heap_alloc_bytes',
+          'go_memstats_heap_idle_bytes': 'supabase.go.memstats.heap_idle_bytes',
+          'go_memstats_heap_inuse_bytes': 'supabase.go.memstats.heap_inuse_bytes',
+          'go_memstats_heap_objects': 'supabase.go.memstats.heap_objects',
+          'go_memstats_heap_sys_bytes': 'supabase.go.memstats.heap_sys_bytes',
+          'go_memstats_next_gc_bytes': 'supabase.go.memstats.next_gc_bytes',
+          'go_memstats_stack_inuse_bytes': 'supabase.go.memstats.stack_inuse_bytes',
+          'go_memstats_sys_bytes': 'supabase.go.memstats.sys_bytes',
+          'go_threads': 'supabase.go.threads',
+          'gotrue_compare_hash_and_password_completed_total': 'supabase.gotrue.compare_hash_and_password_completed.count',
+          'gotrue_compare_hash_and_password_submitted_total': 'supabase.gotrue.compare_hash_and_password_submitted.count',
+          'gotrue_generate_from_password_completed_total': 'supabase.gotrue.generate_from_password_completed.count',
+          'gotrue_generate_from_password_submitted_total': 'supabase.gotrue.generate_from_password_submitted.count',
+          'gotrue_running': 'supabase.gotrue.running',
+          'http_status_codes_total': 'supabase.http.status_codes.count',
+          'pgrst_db_pool_available': 'supabase.pgrst.db_pool.available_connections',
+          'pgrst_db_pool_max': 'supabase.pgrst.db_pool.max_connections',
+          'pgrst_db_pool_timeouts_total': 'supabase.pgrst.db_pool.connection_timeouts.count',
+          'pgrst_db_pool_waiting': 'supabase.pgrst.db_pool.requests_waiting',
+          'pgrst_jwt_cache_evictions_total': 'supabase.pgrst.jwt_cache.evictions.count',
+          'pgrst_jwt_cache_hits_total': 'supabase.pgrst.jwt_cache.hits.count',
+          'pgrst_jwt_cache_requests_total': 'supabase.pgrst.jwt_cache.requests.count',
+          'pgrst_schema_cache_loads_total': 'supabase.pgrst.schema_cache.loads.count',
+          'pgrst_schema_cache_query_time_seconds': 'supabase.pgrst.schema_cache.query_time_seconds',
+          'process_cpu_seconds_total': 'supabase.process.cpu_seconds.count',
+          'process_max_fds': 'supabase.process.max_fds',
+          'process_open_fds': 'supabase.process.open_fds',
+          'process_resident_memory_bytes': 'supabase.process.resident_memory_bytes',
+          'process_virtual_memory_bytes': 'supabase.process.virtual_memory_bytes',
+          'realtime_postgres_changes_client_subscriptions': 'supabase.realtime_postgres_changes.client_subscriptions',
+          'realtime_postgres_changes_total_subscriptions': 'supabase.realtime_postgres_changes.total_subscriptions',
+          'storage_size_bytes': 'supabase.storage.storage_size',
+          'supavisor_client_connection_duration_bucket': 'supabase.supavisor.client.connection.duration.bucket',
+          'supavisor_client_connection_duration_count': 'supabase.supavisor.client.connection.duration.count',
+          'supavisor_client_connection_duration_sum': 'supabase.supavisor.client.connection.duration.sum',
+          'supavisor_client_joins_fail': 'supabase.supavisor.client.joins.fail.count',
+          'supavisor_client_joins_fail_total': 'supabase.supavisor.client.joins.fail.count',
+          'supavisor_client_joins_ok': 'supabase.supavisor.client.joins.ok.count',
+          'supavisor_client_joins_ok_total': 'supabase.supavisor.client.joins.ok.count',
+          'supavisor_client_network_recv': 'supabase.supavisor.client.network.recv.count',
+          'supavisor_client_network_recv_total': 'supabase.supavisor.client.network.recv.count',
+          'supavisor_client_network_send': 'supabase.supavisor.client.network.send.count',
+          'supavisor_client_network_send_total': 'supabase.supavisor.client.network.send.count',
+          'supavisor_client_queries_count': 'supabase.supavisor.client.queries_count.count',
+          'supavisor_client_queries_count_total': 'supabase.supavisor.client.queries_count.count',
+          'supavisor_client_query_duration_bucket': 'supabase.supavisor.client.query.duration.bucket',
+          'supavisor_client_query_duration_count': 'supabase.supavisor.client.query.duration.count',
+          'supavisor_client_query_duration_sum': 'supabase.supavisor.client.query.duration.sum',
+          'supavisor_connections_active': 'supabase.supavisor.connections.active',
+          'supavisor_db_handler_started_count': 'supabase.supavisor.db.handler.started.count',
+          'supavisor_db_handler_stopped_count': 'supabase.supavisor.db.handler.stopped.count',
+          'supavisor_db_network_recv': 'supabase.supavisor.db.network.recv.count',
+          'supavisor_db_network_recv_total': 'supabase.supavisor.db.network.recv.count',
+          'supavisor_db_network_send': 'supabase.supavisor.db.network.send.count',
+          'supavisor_db_network_send_total': 'supabase.supavisor.db.network.send.count',
+          'supavisor_pool_checkout_duration_local_bucket': 'supabase.supavisor.pool.checkout.duration.local.bucket',
+          'supavisor_pool_checkout_duration_local_count': 'supabase.supavisor.pool.checkout.duration.local.count',
+          'supavisor_pool_checkout_duration_local_sum': 'supabase.supavisor.pool.checkout.duration.local.sum',
+          'supavisor_pool_checkout_duration_remote_bucket': 'supabase.supavisor.pool.checkout.duration.remote.bucket',
+          'supavisor_pool_checkout_duration_remote_count': 'supabase.supavisor.pool.checkout.duration.remote.count',
+          'supavisor_pool_checkout_duration_remote_sum': 'supabase.supavisor.pool.checkout.duration.remote.sum',
+          'supavisor_pool_connections_checked_out': 'supabase.supavisor.pool.connections.checked_out',
+          'supavisor_pool_connections_idle': 'supabase.supavisor.pool.connections.idle',
+          'supavisor_tenants_active': 'supabase.supavisor.tenants.active'
+        ];
+        def DOT = /[.]/;
+        if (ctx.containsKey('metrics')) {
+          def metricsMap = ctx.metrics;
+          def keysToRemove = [];
+          for (def entry : metricsMap.entrySet()) {
+            if (RENAME_MAP.containsKey(entry.getKey())) {
+              def target = RENAME_MAP.get(entry.getKey());
+              def parts = DOT.split(target);
+              def current = ctx;
+              for (int i = 0; i < parts.length - 1; i++) {
+                if (!current.containsKey(parts[i])) {
+                  current[parts[i]] = new HashMap();
+                }
+                current = current[parts[i]];
+              }
+              current[parts[parts.length - 1]] = entry.getValue();
+              keysToRemove.add(entry.getKey());
+            }
+          }
+          for (def key : keysToRemove) {
+            metricsMap.remove(key);
+          }
+        }
+  - remove:
+      tag: drop_remaining_metrics
+      field: metrics
+      ignore_missing: true
+
+on_failure:
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{{#_ingest.on_failure_processor_tag}}}with tag '{{{ _ingest.on_failure_processor_tag }}}'
+        {{{/_ingest.on_failure_processor_tag}}}failed with message '{{{ _ingest.on_failure_message }}}'
+        in pipeline '{{{ _ingest.pipeline }}}'
+  - set:
+      field: event.kind
+      tag: set_pipeline_error_to_event_kind
+      value: pipeline_error

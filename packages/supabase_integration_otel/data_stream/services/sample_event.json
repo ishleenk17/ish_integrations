@@ -1,0 +1,83 @@
+{
+    "@timestamp": "2026-07-09T12:00:00.000Z",
+    "data_stream": {
+        "type": "metrics",
+        "dataset": "supabase_integration_otel.services",
+        "namespace": "default"
+    },
+    "supabase": {
+        "supavisor": {
+            "connections": { "active": 5 },
+            "pool": {
+                "connections": {
+                    "idle": 3,
+                    "checked_out": 2
+                }
+            },
+            "tenants": { "active": 1 },
+            "client": {
+                "joins": {
+                    "ok": { "count": 1523 },
+                    "fail": { "count": 3 }
+                },
+                "queries_count": { "count": 45210 },
+                "network": {
+                    "recv": { "count": 10485760 },
+                    "send": { "count": 52428800 }
+                }
+            },
+            "db": {
+                "network": {
+                    "recv": { "count": 52428800 },
+                    "send": { "count": 10485760 }
+                }
+            }
+        },
+        "pgrst": {
+            "db_pool": {
+                "available_connections": 8,
+                "max_connections": 10,
+                "requests_waiting": 0
+            },
+            "schema_cache": {
+                "loads": { "count": 12 },
+                "query_time_seconds": 0.045
+            }
+        },
+        "auth_users": {
+            "user_count": 1523
+        },
+        "gotrue": {
+            "running": 1
+        },
+        "db": {
+            "sql": {
+                "connection_open": 5,
+                "connection_max_open": 10
+            },
+            "transmit_bytes": { "count": 104857600 }
+        },
+        "go": {
+            "goroutines": 42,
+            "threads": 8,
+            "memstats": {
+                "alloc_bytes": 5242880,
+                "sys_bytes": 16777216,
+                "heap_alloc_bytes": 5242880,
+                "heap_objects": 12345
+            }
+        },
+        "process": {
+            "resident_memory_bytes": 31457280,
+            "open_fds": 24,
+            "max_fds": 1048576
+        },
+        "realtime_postgres_changes": {
+            "client_subscriptions": 3,
+            "total_subscriptions": 5
+        },
+        "storage": {
+            "storage_size": 104857600
+        }
+    }
+}

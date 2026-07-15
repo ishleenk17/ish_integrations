@@ -1,0 +1,8 @@
+title: "Supabase PostgreSQL Metrics"
+type: metrics
+streams:
+  - package: prometheus_input_otel
+    title: Supabase PostgreSQL Database Metrics
+    description: >
+      PostgreSQL metrics: database size, connections, transactions,
+      cache, WAL, replication, bgwriter, and statement statistics.

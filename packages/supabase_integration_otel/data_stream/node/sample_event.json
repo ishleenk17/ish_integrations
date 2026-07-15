@@ -1,0 +1,70 @@
+{
+    "@timestamp": "2026-07-09T12:00:00.000Z",
+    "data_stream": {
+        "type": "metrics",
+        "dataset": "supabase_integration_otel.node",
+        "namespace": "default"
+    },
+    "supabase": {
+        "node": {
+            "load1": 0.42,
+            "load5": 0.35,
+            "load15": 0.28,
+            "boot_time_seconds": 1720000000,
+            "procs_running": 2,
+            "procs_blocked": 0,
+            "entropy_available_bits": 3842,
+            "memory": {
+                "mem_total_bytes": 1073741824,
+                "mem_free_bytes": 214748364,
+                "mem_available_bytes": 536870912,
+                "buffers_bytes": 26214400,
+                "cached_bytes": 268435456,
+                "active_bytes": 429496729,
+                "inactive_bytes": 214748364,
+                "swap_total_bytes": 536870912,
+                "swap_free_bytes": 536870912,
+                "slab_bytes": 52428800,
+                "dirty_bytes": 1048576,
+                "committed_as_bytes": 644245094
+            },
+            "cpu": {
+                "seconds": {
+                    "count": 123456.78
+                }
+            },
+            "disk": {
+                "reads_completed": { "count": 54210 },
+                "writes_completed": { "count": 128340 },
+                "read_bytes": { "count": 2214592512 },
+                "written_bytes": { "count": 5368709120 },
+                "io_now": 0,
+                "io_time_seconds": { "count": 3421.5 }
+            },
+            "filesystem": {
+                "size_bytes": 10737418240,
+                "free_bytes": 5368709120,
+                "available_bytes": 5100273664,
+                "files": 655360,
+                "files_free": 614400
+            },
+            "network": {
+                "receive_bytes": { "count": 1073741824 },
+                "transmit_bytes": { "count": 536870912 },
+                "receive_packets": { "count": 8421000 },
+                "transmit_packets": { "count": 5120000 },
+                "receive_errors": { "count": 0 },
+                "transmit_errors": { "count": 0 }
+            },
+            "vmstat": {
+                "pgpgin": 524288,
+                "pgpgout": 1048576,
+                "oom_kill": 0
+            },
+            "filefd": {
+                "allocated": 1024,
+                "maximum": 65536
+            }
+        }
+    }
+}

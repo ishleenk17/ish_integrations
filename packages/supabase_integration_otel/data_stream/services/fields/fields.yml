@@ -1,0 +1,350 @@
+# Supabase Application Service metrics
+# Source: Supavisor, PostgREST, GoTrue/Auth, Realtime, Storage
+# Reference: https://github.com/supabase/supabase-grafana
+
+# --- Labels / Dimensions ---
+- name: supabase.labels
+  type: group
+  fields:
+    - name: instance
+      type: keyword
+      description: Supabase project instance identifier.
+      dimension: true
+    - name: job
+      type: keyword
+      description: Prometheus scrape job name.
+      dimension: true
+
+# ===== Supavisor (Connection Pooler) =====
+- name: supabase.supavisor.connections.active
+  type: double
+  metric_type: gauge
+  description: Active client connections to the Supavisor pooler for a tenant.
+- name: supabase.supavisor.pool.connections.idle
+  type: double
+  metric_type: gauge
+  description: Idle Supavisor pool connections per tenant.
+- name: supabase.supavisor.pool.connections.checked_out
+  type: double
+  metric_type: gauge
+  description: Checked-out (busy) Supavisor pool connections per tenant.
+- name: supabase.supavisor.tenants.active
+  type: double
+  metric_type: gauge
+  description: Total active tenants in Supavisor.
+- name: supabase.supavisor.client.joins.ok.count
+  type: double
+  metric_type: counter
+  description: Total successful client joins to the pooler.
+- name: supabase.supavisor.client.joins.fail.count
+  type: double
+  metric_type: counter
+  description: Total failed client joins to the pooler.
+- name: supabase.supavisor.client.queries_count.count
+  type: double
+  metric_type: counter
+  description: Total queries received from clients.
+- name: supabase.supavisor.client.network.recv.count
+  type: double
+  metric_type: counter
+  unit: byte
+  description: Total bytes received from clients.
+- name: supabase.supavisor.client.network.send.count
+  type: double
+  metric_type: counter
+  unit: byte
+  description: Total bytes sent to clients.
+- name: supabase.supavisor.db.network.recv.count
+  type: double
+  metric_type: counter
+  unit: byte
+  description: Total bytes received from the database.
+- name: supabase.supavisor.db.network.send.count
+  type: double
+  metric_type: counter
+  unit: byte
+  description: Total bytes sent to the database.
+- name: supabase.supavisor.db.handler.started.count
+  type: double
+  metric_type: counter
+  description: Database handler processes started.
+- name: supabase.supavisor.db.handler.stopped.count
+  type: double
+  metric_type: counter
+  description: Database handler processes stopped.
+# Supavisor histograms — query duration
+- name: supabase.supavisor.client.query.duration
+  type: group
+  fields:
+    - name: bucket
+      type: double
+      description: Histogram bucket for client query duration.
+    - name: count
+      type: double
+      description: Total count of client queries.
+    - name: sum
+      type: double
+      description: Total time spent processing client queries.
+# Supavisor histograms — connection duration
+- name: supabase.supavisor.client.connection.duration
+  type: group
+  fields:
+    - name: bucket
+      type: double
+      description: Histogram bucket for client connection duration.
+    - name: count
+      type: double
+      description: Total count of client connections.
+    - name: sum
+      type: double
+      description: Total client connection duration.
+# Supavisor histograms — pool checkout (local)
+- name: supabase.supavisor.pool.checkout.duration.local
+  type: group
+  fields:
+    - name: bucket
+      type: double
+      description: Histogram bucket for local pool checkout latency.
+    - name: count
+      type: double
+      description: Total count of local pool checkouts.
+    - name: sum
+      type: double
+      description: Total local pool checkout duration.
+# Supavisor histograms — pool checkout (remote)
+- name: supabase.supavisor.pool.checkout.duration.remote
+  type: group
+  fields:
+    - name: bucket
+      type: double
+      description: Histogram bucket for remote pool checkout latency.
+    - name: count
+      type: double
+      description: Total count of remote pool checkouts.
+    - name: sum
+      type: double
+      description: Total remote pool checkout duration.
+
+# ===== PostgREST =====
+- name: supabase.pgrst.db_pool.available_connections
+  type: double
+  metric_type: gauge
+  description: Available connections in the PostgREST pool.
+- name: supabase.pgrst.db_pool.max_connections
+  type: double
+  metric_type: gauge
+  description: Maximum pool connections for PostgREST.
+- name: supabase.pgrst.db_pool.requests_waiting
+  type: double
+  metric_type: gauge
+  description: Requests waiting to acquire a PostgREST pool connection.
+- name: supabase.pgrst.db_pool.connection_timeouts.count
+  type: double
+  metric_type: counter
+  description: Total number of PostgREST pool connection timeouts.
+- name: supabase.pgrst.schema_cache.loads.count
+  type: double
+  metric_type: counter
+  description: Total number of times the PostgREST schema cache was loaded.
+- name: supabase.pgrst.schema_cache.query_time_seconds
+  type: double
+  metric_type: gauge
+  unit: s
+  description: Query time of the last PostgREST schema cache load.
+- name: supabase.pgrst.jwt_cache.requests.count
+  type: double
+  metric_type: counter
+  description: Total JWT cache requests.
+- name: supabase.pgrst.jwt_cache.hits.count
+  type: double
+  metric_type: counter
+  description: Total JWT cache hits.
+- name: supabase.pgrst.jwt_cache.evictions.count
+  type: double
+  metric_type: counter
+  description: Total JWT cache evictions.
+
+# ===== GoTrue / Auth =====
+- name: supabase.auth_users.user_count
+  type: double
+  metric_type: gauge
+  description: Number of users in the project database.
+- name: supabase.gotrue.running
+  type: double
+  metric_type: gauge
+  description: GoTrue service health (1 when running).
+- name: supabase.gotrue.generate_from_password_submitted.count
+  type: double
+  metric_type: counter
+  description: Password hash generation attempts submitted.
+- name: supabase.gotrue.generate_from_password_completed.count
+  type: double
+  metric_type: counter
+  description: Password hash generation attempts completed.
+- name: supabase.gotrue.compare_hash_and_password_submitted.count
+  type: double
+  metric_type: counter
+  description: Password comparison attempts submitted.
+- name: supabase.gotrue.compare_hash_and_password_completed.count
+  type: double
+  metric_type: counter
+  description: Password comparison attempts completed.
+# GoTrue HTTP server
+- name: supabase.http.server.request_duration_seconds
+  type: group
+  fields:
+    - name: bucket
+      type: double
+      description: Histogram bucket for HTTP request duration.
+    - name: count
+      type: double
+      description: Total HTTP requests.
+    - name: sum
+      type: double
+      description: Total HTTP request duration.
+- name: supabase.http.status_codes.count
+  type: double
+  metric_type: counter
+  description: HTTP response status codes by route.
+
+# GoTrue database connections
+- name: supabase.db.sql.connection_open
+  type: double
+  metric_type: gauge
+  description: Number of established connections both in use and idle.
+- name: supabase.db.sql.connection_max_open
+  type: double
+  metric_type: gauge
+  description: Maximum number of open connections to the database.
+- name: supabase.db.sql.connection_wait.count
+  type: double
+  metric_type: counter
+  description: Total number of connections waited for.
+- name: supabase.db.sql.connection_closed_max_idle.count
+  type: double
+  metric_type: counter
+  description: Total connections closed due to SetConnMaxIdleTime.
+- name: supabase.db.sql.connection_closed_max_lifetime.count
+  type: double
+  metric_type: counter
+  description: Total connections closed due to SetConnMaxLifetime.
+- name: supabase.db.transmit_bytes.count
+  type: double
+  metric_type: counter
+  unit: byte
+  description: Postgres and PgBouncer network transmit bytes.
+
+# GoTrue Go runtime
+- name: supabase.go.goroutines
+  type: double
+  metric_type: gauge
+  description: Active goroutines.
+- name: supabase.go.threads
+  type: double
+  metric_type: gauge
+  description: OS threads created.
+- name: supabase.go.memstats.alloc_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Bytes allocated and in use.
+- name: supabase.go.memstats.sys_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Bytes obtained from system.
+- name: supabase.go.memstats.heap_alloc_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Heap bytes allocated and in use.
+- name: supabase.go.memstats.heap_sys_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Heap bytes from system.
+- name: supabase.go.memstats.heap_idle_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Heap bytes waiting to be used.
+- name: supabase.go.memstats.heap_inuse_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Heap bytes in use.
+- name: supabase.go.memstats.heap_objects
+  type: double
+  metric_type: gauge
+  description: Allocated heap objects.
+- name: supabase.go.memstats.stack_inuse_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Stack bytes in use.
+- name: supabase.go.memstats.gc_sys_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: GC metadata bytes.
+- name: supabase.go.memstats.next_gc_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Heap size at next GC.
+
+# GoTrue process metrics
+- name: supabase.process.cpu_seconds.count
+  type: double
+  metric_type: counter
+  unit: s
+  description: Total CPU time.
+- name: supabase.process.resident_memory_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Resident memory (RSS).
+- name: supabase.process.virtual_memory_bytes
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Virtual memory.
+- name: supabase.process.open_fds
+  type: double
+  metric_type: gauge
+  description: Open file descriptors.
+- name: supabase.process.max_fds
+  type: double
+  metric_type: gauge
+  description: Max file descriptors.
+
+# GoTrue auth version
+- name: supabase.global_auth_version.major
+  type: double
+  metric_type: gauge
+  description: GoTrue major version.
+- name: supabase.global_auth_version.minor
+  type: double
+  metric_type: gauge
+  description: GoTrue minor version.
+- name: supabase.global_auth_version.patch
+  type: double
+  metric_type: gauge
+  description: GoTrue patch version.
+
+# ===== Realtime =====
+- name: supabase.realtime_postgres_changes.client_subscriptions
+  type: double
+  metric_type: gauge
+  description: Client subscriptions listening for Postgres changes.
+- name: supabase.realtime_postgres_changes.total_subscriptions
+  type: double
+  metric_type: gauge
+  description: Total subscription records listening for Postgres changes.
+
+# ===== Storage =====
+- name: supabase.storage.storage_size
+  type: double
+  metric_type: gauge
+  unit: byte
+  description: Total size used for all storage buckets.

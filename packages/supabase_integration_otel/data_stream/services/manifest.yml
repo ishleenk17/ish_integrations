@@ -1,0 +1,8 @@
+title: "Supabase Service Metrics"
+type: metrics
+streams:
+  - package: prometheus_input_otel
+    title: Supabase Application Service Metrics
+    description: >
+      Metrics from Supavisor connection pooler, PostgREST API,
+      GoTrue auth, Realtime subscriptions, and Storage.

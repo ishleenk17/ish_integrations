@@ -1,7 +1,7 @@
 format_version: "3.6.2"
 name: supabase_integration_otel
 title: "Supabase"
-version: 0.6.0
+version: 0.1.0
 source:
   license: "Elastic-2.0"
 description: >-

@@ -8,7 +8,7 @@ This integration scrapes metrics from the Supabase Metrics API (Prometheus-compa
 
 - **Metrics** (`supabase_integration_otel.metrics.otel`) — Infrastructure (CPU, memory, load, disk I/O, filesystem, network), PostgreSQL (size, connections, transactions, cache, WAL, replication, bgwriter, statements), Supavisor, PostgREST, Auth, Realtime, and Storage
 
-Metrics are stored with native OTel schema — no field renaming or custom mapping is applied. Raw Prometheus metric names are preserved under the `metrics.*` namespace.
+Metrics are stored with native OTel schema. Raw Prometheus metric names are preserved under the `metrics.*` namespace.
 
 ## Compatibility
 
@@ -20,8 +20,6 @@ This integration requires a Supabase **Pro**, **Team**, or **Enterprise** plan. 
 |---|---|
 | **Supabase plan** | Pro, Team, or Enterprise |
 | **Elastic Stack** | 9.4.0+ |
-| **Input package** | `prometheus_input_otel` (installed automatically as a dependency) |
-| **Content package** | `supabase_otel` (installed automatically as a dependency) |
 
 ## Setup
 
@@ -74,14 +72,5 @@ See the [Supabase Metrics documentation](https://supabase.com/docs/guides/teleme
 | Go Runtime | `go_*`, `process_*` | `go_goroutines`, `process_cpu_seconds_total`, `process_resident_memory_bytes` |
 | HTTP | `http_*` | `http_server_request_duration_seconds_total`, `http_status_codes_total` |
 
-All metrics are stored under the `metrics.*` field namespace with their original Prometheus names (e.g., `metrics.node_load5`, `metrics.pg_stat_database_xact_commit_total`).
 
-**Exported fields**
-
-| Field | Description | Type |
-|---|---|---|
-| @timestamp | Event timestamp. | date |
-| data_stream.dataset | Data stream dataset. | constant_keyword |
-| data_stream.namespace | Data stream namespace. | constant_keyword |
-| data_stream.type | Data stream type. | constant_keyword |
 

@@ -1,0 +1,8 @@
+title: "Supabase Metrics"
+type: metrics
+streams:
+  - package: prometheus_input_otel
+    title: Supabase Metrics
+    description: >
+      All metrics from the Supabase Metrics API: infrastructure (CPU, memory,
+      disk, network), PostgreSQL, Supavisor, PostgREST, Auth, Realtime, and Storage.

@@ -1,8 +1,0 @@
-title: "Supabase Node Metrics"
-type: metrics
-streams:
-  - package: prometheus_input_otel
-    title: Supabase Node / Infrastructure Metrics
-    description: >
-      Infrastructure metrics from the Supabase database host:
-      CPU, memory, disk I/O, filesystem, network, and system.

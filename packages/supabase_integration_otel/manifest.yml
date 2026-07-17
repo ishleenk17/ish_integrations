@@ -1,13 +1,13 @@
 format_version: "3.6.2"
 name: supabase_integration_otel
 title: "Supabase"
-version: 0.1.0
+version: 0.6.0
 source:
   license: "Elastic-2.0"
 description: >-
   Collect metrics from Supabase using the OTel Prometheus receiver.
   Covers infrastructure, PostgreSQL, Supavisor, PostgREST, Auth,
-  Realtime, and Storage metrics across three dedicated data streams.
+  Realtime, and Storage metrics in a single data stream.
 type: integration
 categories:
   - observability
@@ -30,7 +30,7 @@ requires:
       version: "0.1.1"
   content:
     - package: supabase_otel
-      version: "0.2.0"
+      version: "0.3.0"
 policy_templates:
   - name: supabase
     title: Supabase Metrics
@@ -45,9 +45,7 @@ policy_templates:
         division: engineering
         team: obs-infraobs-integrations
     data_streams:
-      - node
-      - postgres
-      - services
+      - metrics
     inputs:
       - package: prometheus_input_otel
         title: Supabase Metrics via OTel Prometheus Receiver

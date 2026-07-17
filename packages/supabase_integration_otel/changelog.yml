@@ -1,4 +1,14 @@
 # newer versions go on top
+- version: "0.6.0"
+  changes:
+    - description: Consolidate three data streams (node, postgres, services) into a single metrics data stream.
+      type: enhancement
+      link: https://github.com/elastic/integrations/pull/99999
+- version: "0.2.0"
+  changes:
+    - description: Remove custom field mappings and ingest pipelines. Metrics now use native OTel schema without renaming.
+      type: enhancement
+      link: https://github.com/elastic/integrations/pull/99999
 - version: "0.1.0"
   changes:
     - description: Initial release of the Supabase OTel integration for metrics collection via Prometheus receiver.

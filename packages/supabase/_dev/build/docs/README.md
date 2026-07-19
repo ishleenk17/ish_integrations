@@ -6,9 +6,9 @@ Collect metrics from [Supabase](https://supabase.com) using the OpenTelemetry Pr
 
 This integration scrapes metrics from the Supabase Metrics API (Prometheus-compatible) using the OTel Collector's Prometheus receiver. All metrics are collected into a single data stream:
 
-- **Metrics** (`supabase_integration_otel.metrics.otel`) — Infrastructure (CPU, memory, load, disk I/O, filesystem, network), PostgreSQL (size, connections, transactions, cache, WAL, replication, bgwriter, statements), Supavisor, PostgREST, Auth, Realtime, and Storage
+- **Metrics** (`supabase.metrics.otel`) — Infrastructure (CPU, memory, load, disk I/O, filesystem, network), PostgreSQL (size, connections, transactions, cache, WAL, replication, bgwriter, statements), Supavisor, PostgREST, Auth, Realtime, and Storage
 
-Metrics are stored with native OTel schema. Raw Prometheus metric names are preserved under the `metrics.*` namespace.
+Metrics are stored with native OTel schema — no field renaming or custom mapping is applied. Raw Prometheus metric names are preserved under the `metrics.*` namespace.
 
 ## Compatibility
 
@@ -20,6 +20,8 @@ This integration requires a Supabase **Pro**, **Team**, or **Enterprise** plan. 
 |---|---|
 | **Supabase plan** | Pro, Team, or Enterprise |
 | **Elastic Stack** | 9.4.0+ |
+| **Input package** | `prometheus_input_otel` (installed automatically as a dependency) |
+| **Content package** | `supabase_otel` (installed automatically as a dependency) |
 
 ## Setup
 
@@ -37,7 +39,7 @@ This integration requires a Supabase **Pro**, **Team**, or **Enterprise** plan. 
      - **Service Role Key**: paste your service_role JWT
 
 3. **Verify data**:
-   - Go to **Discover** and filter on `data_stream.dataset: "supabase_integration_otel.metrics.otel"`
+   - Go to **Discover** and filter on `data_stream.dataset: "supabase.metrics.otel"`
 
 ## Dashboards
 
@@ -72,5 +74,6 @@ See the [Supabase Metrics documentation](https://supabase.com/docs/guides/teleme
 | Go Runtime | `go_*`, `process_*` | `go_goroutines`, `process_cpu_seconds_total`, `process_resident_memory_bytes` |
 | HTTP | `http_*` | `http_server_request_duration_seconds_total`, `http_status_codes_total` |
 
+All metrics are stored under the `metrics.*` field namespace with their original Prometheus names (e.g., `metrics.node_load5`, `metrics.pg_stat_database_xact_commit_total`).
 
-
+{{fields "metrics"}}

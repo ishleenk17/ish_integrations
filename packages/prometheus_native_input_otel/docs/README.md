@@ -35,7 +35,7 @@ other scraped labels already work unmodified, as does the bare metric name.
 ### Guided configuration
 
 Set **Job Name** and **Scrape Targets** and you are done. Job Name is preserved as the
-`job` label, so set it to the value your existing dashboards group by ó do not leave every
+`job` label, so set it to the value your existing dashboards group by ù do not leave every
 integration policy on the same job name, or `sum by (job)` will aggregate unrelated targets
 into one series.
 
@@ -75,6 +75,34 @@ PROMQL index=metrics-*.otel-* sum by (job, instance) (rate(http_requests_total[5
 ```
 
 Metric names, scraped labels, and `job` / `instance` all resolve as written.
+
+### Metric type coverage
+
+Counters and gauges are stored with their original names and types. Histograms and summaries
+are not yet round-tripped faithfully. Scraping the Prometheus server's own `/metrics` endpoint
+(225 metric families) produced the following:
+
+| Prometheus type | Families | Stored as | Faithful |
+| --- | --- | --- | --- |
+| counter | 109 | `double`, `time_series_metric: counter` | yes |
+| gauge | 89 | `double`, `time_series_metric: gauge` | yes |
+| summary | 12 | `aggregate_metric_double` (`sum`, `value_count` only) | partly ó quantiles dropped |
+| histogram | 15 | not stored | no |
+
+Consequences to plan for:
+
+- **Bucket series do not exist.** `histogram_quantile(0.99, rate(x_bucket[5m]))` cannot work,
+  because no `x_bucket` series is stored. This is independent of `histogram_quantile` not yet
+  being implemented in `PROMQL`, so latency-percentile panels fail at both layers.
+- **Summary quantiles are dropped.** A summary exposes `{quantile="..."}` series plus `_sum`
+  and `_count`; only the sum and count survive, so `x{quantile="0.99"}` returns nothing.
+- Because OTel metrics data streams are created with `index.mapping.ignore_malformed: true`,
+  these drops are silent rather than reported as ingest errors.
+
+Five metrics are added that the endpoint does not expose: `up`, `scrape_duration_seconds`,
+`scrape_samples_scraped`, `scrape_samples_post_metric_relabeling` and `scrape_series_added`.
+These match what a Prometheus server itself synthesizes per scrape, so `up`-based availability
+alerts work as expected.
 
 ### Known limitations
 

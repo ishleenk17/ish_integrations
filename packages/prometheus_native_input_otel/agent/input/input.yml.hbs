@@ -1,0 +1,73 @@
+receivers:
+  prometheus:
+    config:
+{{#if scrape_configs}}
+      scrape_configs: {{scrape_configs}}
+{{else}}
+      scrape_configs:
+        - job_name: {{job_name}}
+          scrape_interval: {{scrape_interval}}
+{{#if scrape_timeout}}
+          scrape_timeout: {{scrape_timeout}}
+{{/if}}
+{{#if metrics_path}}
+          metrics_path: {{metrics_path}}
+{{/if}}
+{{#if scheme}}
+          scheme: {{scheme}}
+{{/if}}
+          honor_labels: {{honor_labels}}
+          honor_timestamps: {{honor_timestamps}}
+{{#if tls_enabled}}
+          tls_config:
+            insecure_skip_verify: {{tls_skip_verify}}
+{{#if tls_ca_file}}
+            ca_file: {{tls_ca_file}}
+{{/if}}
+{{#if tls_cert_file}}
+            cert_file: {{tls_cert_file}}
+{{/if}}
+{{#if tls_key_file}}
+            key_file: {{tls_key_file}}
+{{/if}}
+{{/if}}
+{{#if username}}
+          basic_auth:
+            username: {{username}}
+            password: {{password}}
+{{else if bearer_token}}
+          authorization:
+            type: Bearer
+            credentials: {{bearer_token}}
+{{/if}}
+          static_configs:
+            - targets:
+{{#each targets}}
+                - {{this}}
+{{/each}}
+{{#if relabel_configs}}
+          relabel_configs: {{relabel_configs}}
+{{/if}}
+{{#if metric_relabel_configs}}
+          metric_relabel_configs: {{metric_relabel_configs}}
+{{/if}}
+{{/if}}
+processors:
+  resourcedetection/system:
+    detectors: ["system"]
+  # The Prometheus receiver maps `job` to service.name and `instance` to
+  # service.instance.id. PromQL does not reverse that, so `sum by (job)` silently
+  # returns an ungrouped total and `{job="x"}` matches nothing. Restoring both as
+  # datapoint attributes is what makes unmodified PromQL resolve them.
+  transform/prometheus_labels:
+    error_mode: ignore
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["job"], resource.attributes["service.name"]) where attributes["job"] == nil
+          - set(attributes["instance"], resource.attributes["service.instance.id"]) where attributes["instance"] == nil
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: [resourcedetection/system, transform/prometheus_labels]

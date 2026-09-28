@@ -1,0 +1,7 @@
+service: prometheus_native
+policy_template: prometheus_native
+vars:
+  job_name: prometheus
+  targets:
+    - "{{Hostname}}:{{Port}}"
+  scrape_interval: 10s

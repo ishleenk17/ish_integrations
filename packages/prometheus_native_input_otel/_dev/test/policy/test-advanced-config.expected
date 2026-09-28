@@ -1,0 +1,79 @@
+connectors:
+    forward/componentid-0: {}
+exporters:
+    elasticsearch/componentid-0:
+        endpoints:
+            - https://elasticsearch:9200
+inputs: []
+output_permissions:
+    default:
+        _elastic_agent_checks:
+            cluster:
+                - monitor
+        _elastic_agent_monitoring:
+            indices: []
+        uuid-for-permissions-on-related-indices:
+            indices:
+                - names:
+                    - metrics-*-*
+                  privileges:
+                    - auto_configure
+                    - create_doc
+processors:
+    resourcedetection/componentid-0:
+        detectors:
+            - system
+    transform/componentid-1:
+        error_mode: ignore
+        metric_statements:
+            - context: datapoint
+              statements:
+                - set(attributes["job"], resource.attributes["service.name"]) where attributes["job"] == nil
+                - set(attributes["instance"], resource.attributes["service.instance.id"]) where attributes["instance"] == nil
+    transform/componentid-2:
+        metric_statements:
+            - context: datapoint
+              statements:
+                - set(attributes["data_stream.type"], "metrics")
+                - set(attributes["data_stream.dataset"], "prometheus_native")
+                - set(attributes["data_stream.namespace"], "ep")
+receivers:
+    prometheus/componentid-0:
+        config:
+            scrape_configs:
+                - honor_labels: true
+                  job_name: node-exporter
+                  metric_relabel_configs:
+                    - action: drop
+                      regex: go_memstats_.*
+                      source_labels:
+                        - __name__
+                  scrape_interval: 15s
+                  static_configs:
+                    - targets:
+                        - node-a:9100
+                        - node-b:9100
+                - job_name: kube-pods
+                  kubernetes_sd_configs:
+                    - role: pod
+                  relabel_configs:
+                    - source_labels:
+                        - __meta_kubernetes_namespace
+                      target_label: namespace
+secret_references: []
+service:
+    pipelines:
+        metrics/componentid-0:
+            exporters:
+                - elasticsearch/componentid-0
+            receivers:
+                - forward/componentid-0
+        metrics/componentid-1:
+            exporters:
+                - forward/componentid-0
+            processors:
+                - resourcedetection/componentid-0
+                - transform/componentid-1
+                - transform/componentid-2
+            receivers:
+                - prometheus/componentid-0
